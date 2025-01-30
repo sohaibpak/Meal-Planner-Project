@@ -133,4 +133,4 @@ const mealPlans = {
   ],
 };
 
-module.exports = mealPlans;
+export default mealPlans;

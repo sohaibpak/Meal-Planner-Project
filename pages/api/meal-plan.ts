@@ -1,6 +1,17 @@
-import mealPlans from "../../meal-plan-api";
+import { NextApiRequest, NextApiResponse } from "next";
+import mealPlans from "../../meal-plan-api"; // Import mealPlans from the API file
 
-export default function handler(req, res) {
+// Define the type of the meal plan data structure
+type MealPlanType = {
+  day: string;
+  breakfast: string;
+  lunch: string;
+  dinner: string;
+};
+
+type MealPlans = Record<string, MealPlanType[]>;
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { dietaryRestrictions } = req.query;
 
   if (!dietaryRestrictions) {
@@ -9,9 +20,14 @@ export default function handler(req, res) {
       .json({ message: "Dietary restrictions are required." });
   }
 
-  const normalizedRestrictions = dietaryRestrictions.toLowerCase().trim();
+  const normalizedRestrictions = dietaryRestrictions
+    .toString()
+    .toLowerCase()
+    .trim();
 
-  const mealPlan = mealPlans[normalizedRestrictions];
+  const mealPlan: MealPlanType[] | undefined = (mealPlans as MealPlans)[
+    normalizedRestrictions
+  ];
 
   if (mealPlan) {
     res.status(200).json({ mealPlan });
